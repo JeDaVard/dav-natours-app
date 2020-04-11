@@ -1,5 +1,12 @@
 const Tour = require('../models/tour');
 
+exports.aliasTopTours = (req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = '-ratingAverage,price';
+    req.query.fields = 'name,price,ratingAverage,summary,difficulty';
+    next()
+}
+
 exports.getTours = async (req, res) => {
     try {
         // Filtering by an exact value
@@ -29,15 +36,32 @@ exports.getTours = async (req, res) => {
         if (req.query.sort){
             queryTours = queryTours.sort(req.query.sort.split(',').join(' '));
         } else {
-            queryTours = queryTours.sort('-createdAt')
+            queryTours = queryTours.sort('-createdAt');
         }
 
         // Field limiting
         if (req.query.fields) {
             const fields = req.query.fields.split(',').join(' ');
-            queryTours = queryTours.select(fields)
+            queryTours = queryTours.select(fields);
+        } else {
+            queryTours = queryTours.select('-__v');
         }
 
+        // Pagination
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || 4;
+        let skip = (limit-1) * page
+
+        if (req.query.page) {
+            const allTours = await Tour.countDocuments();
+            if (skip >= allTours) {
+                skip = allTours - limit
+            }
+        }
+
+        queryTours = queryTours.skip(skip).limit(limit);
+
+        // Execute query
         const tours = await queryTours;
         res.status(200).json({
             status: 'success',

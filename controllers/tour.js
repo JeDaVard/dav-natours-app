@@ -2,8 +2,43 @@ const Tour = require('../models/tour');
 
 exports.getTours = async (req, res) => {
     try {
-        const tours = await Tour.find();
+        // Filtering by an exact value
+        const queryObj = { ...req.query };
+        const fields = [
+            'duration',
+            'difficulty',
+            'maxGroupSize',
+            'price',
+            'ratingAverage',
+            'startDates',
+        ];
+        for (let prop in req.query) {
+            if (!fields.includes(prop)) delete queryObj[prop];
+        }
 
+        // Filtering by gte, lte, lt, gt powered by MongoDB
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(
+            /\b(gte|gt|lte|lt)\b/g,
+            (match) => `$${match}`
+        );
+
+        // Sorting
+        let queryTours = Tour.find(JSON.parse(queryStr));
+
+        if (req.query.sort){
+            queryTours = queryTours.sort(req.query.sort.split(',').join(' '));
+        } else {
+            queryTours = queryTours.sort('-createdAt')
+        }
+
+        // Field limiting
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ');
+            queryTours = queryTours.select(fields)
+        }
+
+        const tours = await queryTours;
         res.status(200).json({
             status: 'success',
             result: tours.length,
@@ -57,11 +92,11 @@ exports.getTour = async (req, res) => {
 
 exports.editTour = async (req, res) => {
     try {
-        const updates = req.body
+        const updates = req.body;
 
         const _id = req.params.id;
         const tour = await Tour.updateOne({ _id }, updates);
-        await tour.save()
+        await tour.save();
 
         res.status(200).json({
             status: 'success',

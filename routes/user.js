@@ -2,6 +2,7 @@ const express = require('express');
 const userControllers = require('../controllers/user');
 const router = express.Router();
 
+router.param('id', userControllers.checkID)
 
 router.route('/')
     .get(userControllers.getUsers)

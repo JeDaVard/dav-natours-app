@@ -1,91 +1,92 @@
-const fs = require('fs');
+const Tour = require('../models/tour');
 
-const tours = JSON.parse(
-    fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
+exports.getTours = async (req, res) => {
+    try {
+        const tours = await Tour.find();
 
-exports.checkID = (req, res, next, val) => {
-    const tour = tours.find((tour) => tour.id === +req.params.id);
-    if (!tour)
-        return res.status(404).json({
-            status: 'fail',
-            message: `Not found tour with ${val} id`,
+        res.status(200).json({
+            status: 'success',
+            result: tours.length,
+            data: {
+                tours,
+            },
         });
-    next();
-};
-
-exports.checkBody = (req, res, next) => {
-    if (!req.body.name || !req.body.price) {
-        return res.status(400).json({
+    } catch (e) {
+        res.status(404).json({
             status: 'fail',
-            message: 'Please, complete price and name',
+            e: e.errmsg,
         });
     }
-    next();
 };
 
-exports.getTours = (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        result: tours.length,
-        data: {
-            tours,
-        },
-    });
+exports.addNewTour = async (req, res) => {
+    const data = req.body;
+
+    try {
+        const tour = await Tour.create(data);
+
+        res.status(201).json({
+            status: 'success',
+            data: {
+                tour,
+            },
+        });
+    } catch (e) {
+        res.status(400).json({
+            status: 'fail',
+            e: e.errmsg,
+        });
+    }
+};
+exports.getTour = async (req, res) => {
+    try {
+        const _id = req.params.id;
+        const tour = await Tour.findOne({ _id });
+
+        res.status(200).json({
+            status: 'success',
+            data: { tour },
+        });
+    } catch (e) {
+        res.status(404).json({
+            status: 'fail',
+            e: e.errmsg,
+        });
+    }
 };
 
-exports.addNewTour = (req, res) => {
-    console.log(req.body)
-    const newId = tours[tours.length - 1].id + 1;
-    const newTour = Object.assign({ id: newId }, req.body);
-    tours.push(newTour);
-    fs.writeFile(
-        `${__dirname}/dev-data/data/tours-simple.json`,
-        JSON.stringify(tours),
-        (err) => {
-            res.status(201).json({
-                status: 'success',
-                data: {
-                    tours: newTour,
-                },
-            });
-        }
-    );
+exports.editTour = async (req, res) => {
+    try {
+        const updates = req.body
+
+        const _id = req.params.id;
+        const tour = await Tour.updateOne({ _id }, updates);
+        await tour.save()
+
+        res.status(200).json({
+            status: 'success',
+            data: { tour },
+        });
+    } catch (e) {
+        res.status(400).json({
+            status: 'fail',
+            e: e.errmsg,
+        });
+    }
 };
-exports.getTour = (req, res) => {
-    const tour = tours.find((tour) => tour.id === +req.params.id);
+exports.removeTour = async (req, res) => {
+    try {
+        const _id = req.params.id;
+        await Tour.deleteOne({ _id });
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour,
-        },
-    });
-};
-
-exports.editTour = (req, res) => {
-    let tour = tours.find((tour) => tour.id === +req.params.id);
-
-    tour = {
-        ...tour.data,
-        ...req.body,
-    };
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour,
-        },
-    });
-};
-exports.removeTour = (req, res) => {
-    const deleteResponse = tours.filter((item) => item.id !== +req.params.id);
-
-    res.status(200).json({
-        status: 'success',
-        result: tours.length,
-        data: {
-            tours: deleteResponse,
-        },
-    });
+        res.status(200).json({
+            status: 'success',
+            data: null,
+        });
+    } catch (e) {
+        res.status(400).json({
+            status: 'fail',
+            e: e.errmsg,
+        });
+    }
 };

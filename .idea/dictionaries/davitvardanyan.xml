@@ -2,6 +2,8 @@
   <dictionary name="davitvardanyan">
     <words>
       <w>dotenv</w>
+      <w>slugify</w>
+      <w>virtuals</w>
     </words>
   </dictionary>
 </component>

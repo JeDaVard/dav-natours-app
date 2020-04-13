@@ -13,6 +13,21 @@ mongoose.connect(process.env.DB, {
 }).then(() => console.log('Database is connected successfully...'));
 
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server is up on port: ${port}. ...`);
 });
+
+process.on('unhandledRejection', err => {
+    console.log(err.name, err.message);
+    console.log('unhandledRejection. Shutting down...');
+    server.close(() => {
+        process.exit(1)
+    })
+});
+process.on('uncaughtException', err => {
+    console.log(err.name, err.message);
+    console.log('uncaughtException. Shutting down...');
+    server.close(() => {
+        process.exit(1)
+    })
+})

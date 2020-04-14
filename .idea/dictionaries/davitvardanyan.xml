@@ -1,7 +1,9 @@
 <component name="ProjectDictionaryState">
   <dictionary name="davitvardanyan">
     <words>
+      <w>bcrypt</w>
       <w>dotenv</w>
+      <w>nodemailer</w>
       <w>slugify</w>
       <w>virtuals</w>
     </words>

@@ -5,16 +5,9 @@ class APIFeatures {
     }
     filter() {
         const queryObj = { ...this.queryString };
-        const fields = [
-            'duration',
-            'difficulty',
-            'maxGroupSize',
-            'price',
-            'ratingsAverage',
-            'startDates',
-        ];
+        const exclFields = ['page', 'sort', 'limit', 'fields'];
         for (let prop in this.queryString) {
-            if (!fields.includes(prop)) delete queryObj[prop];
+            if (exclFields.includes(prop)) delete queryObj[prop];
         }
 
         let queryStr = JSON.stringify(queryObj);
@@ -48,10 +41,10 @@ class APIFeatures {
     }
     paginate() {//model) {
         const page = +this.queryString.page || 1;
-        const limit = +this.queryString.limit || 4;
-        let skip = (limit-1) * page
+        const limit = +this.queryString.limit || 6;
+        let skip = (page - 1) * limit
 
-        //this was a pagination config but the result I invented I didn't like, so. // :)
+        //this was a pagination config but the algorithm I invented I didn't like, so. // :)
         // if (this.queryString.page) {
         //     const allTours = model.then(count => count).catch(e => e);
         //     console.log('a', allTours, 'a')

@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const handleFactory = require('./handleFactory');
 
 
 const filterObj = (data, ...args) => {
@@ -9,7 +10,9 @@ const filterObj = (data, ...args) => {
     return filtered;
 }
 
-exports.updateUser = catchAsync(async (req, res, next) => {
+
+
+exports.updateMe = catchAsync(async (req, res, next) => {
     // Create error if user POSTs password data
     if (req.body.password || req.body.passwordConfirm) {
         return next(new AppError('This route is not for password updates. Please use /update-password', 400))
@@ -29,25 +32,6 @@ exports.updateUser = catchAsync(async (req, res, next) => {
     })
 })
 
-exports.getUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find();
-
-    res.status(200).json({
-        status: 'success',
-        users
-    });
-});
-
-exports.getUser = catchAsync(async (req, res) => {
-    const user = await User.findOne({_id: req.params.id});
-    res.status(200).json({
-        status: 'success',
-        data: {
-            user
-        }
-    })
-});
-
 exports.removeUser = catchAsync(async (req, res) => {
     await User.findByIdAndUpdate(req.user.id, { active: false })
 
@@ -56,3 +40,16 @@ exports.removeUser = catchAsync(async (req, res) => {
         data: null
     });
 });
+
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+
+    next()
+}
+
+exports.getUsers = handleFactory.getAll(User)
+exports.getUser = handleFactory.getOne(User);
+exports.createUser = handleFactory.createOne(User);
+// Do not change the password by this method
+exports.editUser = handleFactory.updateOne(User);
+exports.deleteUser = handleFactory.deleteOne(User);

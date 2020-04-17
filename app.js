@@ -20,7 +20,7 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(helmet());
 // limit request from the same IP
 const limiter = rateLimit({
-    max: 100,
+    max: 300,
     windowMs: 60 * 60 * 1000,
     message: 'Too many requests from this IP!',
 });
@@ -57,16 +57,17 @@ app.use(
 );
 //____________________________________________________________________
 // Routes
-app.get('/', (req, res) => {
-    res.status(200).render('base')
-})
+const viewRouter = require('./routes/view')
 const tourRouter = require('./routes/tour');
 const userRouter = require('./routes/user');
 const reviewRouter = require('./routes/review');
+const bookingRouter = require('./routes/booking');
 
 app.use('/api/v1/tours', tourRouter);
-app.use('/', userRouter);
-app.use('/', reviewRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
+app.use('/', viewRouter)
 
 app.all('*', (req, res, next) => {
     next(new AppError('Not found!'));

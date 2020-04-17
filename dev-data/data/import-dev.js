@@ -3,6 +3,7 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const Tour = require('../../models/tour');
 const User = require('../../models/user');
+const Review = require('../../models/review');
 
 dotenv.config({ path: '../../config.env' });
 mongoose
@@ -17,41 +18,25 @@ mongoose
 // Read JSON files
 const tours = JSON.parse(fs.readFileSync('tours.json', 'utf-8'));
 const users = JSON.parse(fs.readFileSync('users.json', 'utf-8'));
+const reviews = JSON.parse(fs.readFileSync('reviews.json', 'utf-8'));
 
-// Import tours
+
 const importTours = async () => {
     try {
-        await Tour.create(tours);
+        await Tour.create(tours, { validateBeforeSave: false });
+        await User.create(users, { validateBeforeSave: false });
+        await Review.create(reviews, { validateBeforeSave: false });
         console.log('Imported successfully');
     } catch (e) {
         console.log(e);
     }
     process.exit();
 };
-// Remove all tours
+
 const deleteTours = async () => {
     try {
         await Tour.deleteMany();
-        console.log('Deleted successfully');
-    } catch (e) {
-        console.log(e);
-    }
-    process.exit();
-};
-
-// Import tours
-const importUsers = async () => {
-    try {
-        await User.create(users);
-        console.log('Imported successfully');
-    } catch (e) {
-        console.log(e);
-    }
-    process.exit();
-};
-// Remove all tours
-const deleteUsers = async () => {
-    try {
+        await Review.deleteMany();
         await User.deleteMany();
         console.log('Deleted successfully');
     } catch (e) {
@@ -60,19 +45,12 @@ const deleteUsers = async () => {
     process.exit();
 };
 
+
 // Processing
-if (process.argv.includes('-remove-tours')) {
+if (process.argv.includes('-remove')) {
     deleteTours().then(() => console.log('Done'));
 }
 
-if (process.argv.includes('-import-tours')) {
+if (process.argv.includes('-import')) {
     importTours().then(() => console.log('Done'));
-}
-
-if (process.argv.includes('-remove-users')) {
-    deleteUsers().then(() => console.log('Done'));
-}
-
-if (process.argv.includes('-import-users')) {
-    importUsers().then(() => console.log('Done'));
 }

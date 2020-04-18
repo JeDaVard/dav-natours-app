@@ -31,7 +31,7 @@ app.use('/', limiter);
 // (the case was: mongo query on email input & fake pass = easy login)
 // BUT I TURNED THIS OF BECAUSE OF "Too many requests, please try again later."
 // MESSAGE WHILE TRYING TO MANAGE WITH THE WEBSITE A BIT FASTER :(
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 // data sanitization against xss
 app.use(xssClean());
 //____________________________________________________________________

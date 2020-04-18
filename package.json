@@ -37,10 +37,10 @@
     "slugify": "^1.4.0",
     "stripe": "^8.43.0",
     "validator": "^13.0.0",
-    "xss-clean": "^0.1.1"
+    "xss-clean": "^0.1.1",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0",
     "ndb": "^1.1.5",
     "nodemon": "^2.0.3",
     "prettier": "2.0.4"

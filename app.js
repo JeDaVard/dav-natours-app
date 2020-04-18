@@ -3,7 +3,8 @@ const path = require('path');
 const AppError = require('./utils/appError');
 const globalErrorController = require('./controllers/error');
 const cookieParser = require('cookie-parser');
-const compression = require('compression')
+const compression = require('compression');
+const cors = require('cors');
 
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -36,6 +37,14 @@ app.use('/', limiter);
 // app.use(mongoSanitize());
 // data sanitization against xss
 app.use(xssClean());
+//Implementing cors
+//Access-Control-Allow-Origin
+app.use(cors({
+    origin: 'https://dav-natours-app.herokuapp.com/api/v1/tours'
+}));
+// Not simple requests
+// app.options('*', cors());
+app.options('/api/v1/tours/:id', cors())
 //____________________________________________________________________
 // MIDDLEWARE
 // body parser, reading data from body into req.body

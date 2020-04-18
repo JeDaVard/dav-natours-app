@@ -2,38 +2,41 @@ const express = require('express');
 const path = require('path');
 const AppError = require('./utils/appError');
 const globalErrorController = require('./controllers/error');
+const cookieParser = require('cookie-parser')
 
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const xssClean = require('xss-clean');
-const mongoSanitize = require('express-rate-limit');
-const hpp = require('hpp');
+// const rateLimit = require('express-rate-limit');
+// const helmet = require('helmet');
+// const xssClean = require('xss-clean');
+// const mongoSanitize = require('express-rate-limit');
+// const hpp = require('hpp');
 
 //____________________________________________________________________
 // App settings
 const app = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'))
-//____________________________________________________________________
-// GLOBAL MID FOR SECURITY SEEKS
-// set security http headers
-app.use(helmet());
-// limit request from the same IP
-const limiter = rateLimit({
-    max: 300,
-    windowMs: 60 * 60 * 1000,
-    message: 'Too many requests from this IP!',
-});
-app.use('/', limiter);
-// data sanitization against NoSQL query injection
-app.use(mongoSanitize());
-// data sanitization against xss
-app.use(xssClean());
+// //____________________________________________________________________
+// // GLOBAL MID FOR SECURITY SEEKS
+// // set security http headers
+// app.use(helmet());
+// // limit request from the same IP
+// const limiter = rateLimit({
+//     max: 300,
+//     windowMs: 60 * 60 * 1000,
+//     message: 'Too many requests from this IP!',
+// });
+// app.use('/', limiter);
+// // data sanitization against NoSQL query injection
+// app.use(mongoSanitize());
+// // data sanitization against xss
+// app.use(xssClean());
 //____________________________________________________________________
 // MIDDLEWARE
 // body parser, reading data from body into req.body
 //  and limit to 20kb
 app.use(express.json({ limit: '20kb' }));
+// cookie parser
+app.use(cookieParser());
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
 // test middleware
@@ -42,19 +45,19 @@ app.use((req, res, next) => {
     // console.log(req.headers)
     next();
 });
-// prevent parameter pollution
-app.use(
-    hpp({
-        whitelist: [
-            'duration',
-            'ratingsQuantity',
-            'ratingsAverage',
-            'maxGroupSize',
-            'difficulty',
-            'price',
-        ],
-    })
-);
+// // prevent parameter pollution
+// app.use(
+//     hpp({
+//         whitelist: [
+//             'duration',
+//             'ratingsQuantity',
+//             'ratingsAverage',
+//             'maxGroupSize',
+//             'difficulty',
+//             'price',
+//         ],
+//     })
+// );
 //____________________________________________________________________
 // Routes
 const viewRouter = require('./routes/view')

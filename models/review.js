@@ -33,8 +33,8 @@ const reviewSchema = new mongoose.Schema(
     }
 );
 
-// unique option for "1 tour - 1 user 1 review"
-reviewSchema.index({tour: 1, user: 1}, { unique: true });
+// unique option for "1 tour - 1 author 1 review"
+reviewSchema.index({tour: 1, author: 1}, { unique: true });
 
 reviewSchema.pre(/^find/, function(next) {
     this.populate({

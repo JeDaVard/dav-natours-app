@@ -8568,7 +8568,7 @@ var updateSettings = /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
-            url = type === 'password' ? '/api/v1/users/updatePassword' : '/api/v1/users/edit';
+            url = type === 'password' ? '/api/v1/users/update-password' : '/api/v1/users/edit';
             _context.next = 4;
             return (0, _axios.default)({
               method: 'PATCH',
@@ -8580,7 +8580,11 @@ var updateSettings = /*#__PURE__*/function () {
             res = _context.sent;
 
             if (res.data.status === 'success') {
-              (0, _alerts.showAlert)('success', "".concat(type.toUpperCase(), " updated successfully!"));
+              if (data.getAll('photo')[0] === "undefined") {
+                (0, _alerts.showAlert)('success', "Updated successfully!");
+              } else {
+                (0, _alerts.showAlert)('success', "Updated successfully! Please, reload the page.");
+              }
             }
 
             _context.next = 11;

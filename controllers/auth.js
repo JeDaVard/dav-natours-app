@@ -180,7 +180,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     await user.save();
     // User.findByIdAndUpdate will NOT work as intended!
 
-    // 4) Log user in, send JWT
+    // 4) Log user in, send JWT after password changed
     createSendToken(user, 200, res);
 });
 

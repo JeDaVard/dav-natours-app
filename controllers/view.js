@@ -50,7 +50,8 @@ exports.getLoginForm = (req, res) => {
 
 exports.getAccount = (req, res) => {
     res.status(200).render('account', {
-        title: 'Your account'
+        title: 'Your account',
+        // for the response See: res.locals.user = currentUser in auth controller (protect method)
     });
 };
 
@@ -69,7 +70,7 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
 });
 
 exports.updateUserData = catchAsync(async (req, res, next) => {
-    const updatedUser = await User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user.id,
         {
             name: req.body.name,
@@ -80,9 +81,9 @@ exports.updateUserData = catchAsync(async (req, res, next) => {
             runValidators: true
         }
     );
-
+    console.log(req.body.name)
     res.status(200).render('account', {
         title: 'Your account',
-        user: updatedUser
+        user
     });
 });

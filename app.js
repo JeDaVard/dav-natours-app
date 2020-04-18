@@ -35,6 +35,8 @@ app.set('views', path.join(__dirname, 'views'))
 // body parser, reading data from body into req.body
 //  and limit to 20kb
 app.use(express.json({ limit: '20kb' }));
+// encode url
+app.use(express.urlencoded({ extended: true, limit: '10kb'}))
 // cookie parser
 app.use(cookieParser());
 // static files

@@ -52,17 +52,20 @@ exports.signIn = catchAsync(async (req, res, next) => {
     if (!email || !password) return next(new AppError('Please, provide credentials', 400));
 
     const user = await User.findOne({ email }).select('+password');
-    const isMatch = await user.correctPassword(password, user.password);
+    if (!user) return next(new AppError(`There is no account associated with: ${email}`, 400));
 
-    if (!user || !isMatch) return next(new AppError('Incorrect email or password', 400));
+    const isMatch = await user.correctPassword(password, user.password);
+    if (!isMatch) return next(new AppError('Incorrect password', 400));
 
     createSendToken(user, 200, res)
+
+
 });
 
 exports.logout = (req, res) => {
-    res.cookie('jwt', 'loggedout', {
+    res.cookie('token', 'loggedOut(dummyText)', {
         expires: new Date(Date.now() + 10 * 1000),
-        httpOnly: true
+        // httpOnly: true
     });
     res.status(200).json({ status: 'success' });
 };
@@ -89,6 +92,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
 
     req.user = currentUser;
+    res.locals.user = currentUser
     next();
 });
 

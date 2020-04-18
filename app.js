@@ -8,7 +8,7 @@ const compression = require('compression')
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
-const mongoSanitize = require('express-rate-limit');
+// const mongoSanitize = require('express-rate-limit');
 const hpp = require('hpp');
 
 //____________________________________________________________________

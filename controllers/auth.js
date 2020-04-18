@@ -12,15 +12,19 @@ const signToken = id => {
     });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
     const token = signToken(user._id);
 
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
-        httpOnly: true
+        httpOnly: true,
+    // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+        //the same as
+        secure: req.secure || req.headers('x-forwarded-proto') === 'https'
     }
-    if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
     res.cookie('token', token, cookieOptions)
+
 
     // hide password from the output
     user.password = undefined;
@@ -47,7 +51,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     await new Email(user, url).sendWelcome();
 
 
-    createSendToken(user, 201, res);
+    createSendToken(user, 201, req, res);
 });
 
 exports.signIn = catchAsync(async (req, res, next) => {
@@ -61,7 +65,7 @@ exports.signIn = catchAsync(async (req, res, next) => {
     const isMatch = await user.correctPassword(password, user.password);
     if (!isMatch) return next(new AppError('Incorrect password', 400));
 
-    createSendToken(user, 200, res)
+    createSendToken(user, 200, req, res)
 
 
 });
@@ -160,7 +164,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
     // 3) Update changedPasswordAt property for the user
     // 4) Log the user in, send JWT
-    createSendToken(user, 200, res);
+    createSendToken(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -179,7 +183,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     // User.findByIdAndUpdate will NOT work as intended!
 
     // 4) Log user in, send JWT after password changed
-    createSendToken(user, 200, res);
+    createSendToken(user, 200, req, res);
 });
 
 // Only for rendered pages, no errors!

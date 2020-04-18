@@ -14,6 +14,8 @@ const hpp = require('hpp');
 //____________________________________________________________________
 // App settings
 const app = express();
+app.enable('trust proxy');
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'))
 //____________________________________________________________________

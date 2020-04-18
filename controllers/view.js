@@ -61,6 +61,8 @@ exports.getMyTours = catchAsync(async (req, res, next) => {
 
     // 2) Find tours with the returned IDs
     const tourIDs = bookings.map(el => el.tour);
+    // $in operator in mongo is one of the BEST , means extremely
+    // useful (its instead of virtual populate() in this case)
     const tours = await Tour.find({ _id: { $in: tourIDs } });
 
     res.status(200).render('overview', {

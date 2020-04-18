@@ -2,34 +2,38 @@ const express = require('express');
 const path = require('path');
 const AppError = require('./utils/appError');
 const globalErrorController = require('./controllers/error');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const compression = require('compression')
 
-// const rateLimit = require('express-rate-limit');
-// const helmet = require('helmet');
-// const xssClean = require('xss-clean');
-// const mongoSanitize = require('express-rate-limit');
-// const hpp = require('hpp');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const xssClean = require('xss-clean');
+const mongoSanitize = require('express-rate-limit');
+const hpp = require('hpp');
 
 //____________________________________________________________________
 // App settings
 const app = express();
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'))
-// //____________________________________________________________________
-// // GLOBAL MID FOR SECURITY SEEKS
-// // set security http headers
-// app.use(helmet());
-// // limit request from the same IP
-// const limiter = rateLimit({
-//     max: 300,
-//     windowMs: 60 * 60 * 1000,
-//     message: 'Too many requests from this IP!',
-// });
-// app.use('/', limiter);
-// // data sanitization against NoSQL query injection
-// app.use(mongoSanitize());
-// // data sanitization against xss
-// app.use(xssClean());
+//____________________________________________________________________
+// GLOBAL MID FOR SECURITY SEEKS
+// set security http headers
+app.use(helmet());
+// limit request from the same IP
+const limiter = rateLimit({
+    max: 300,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many requests from this IP!',
+});
+app.use('/', limiter);
+// data sanitization against NoSQL query injection
+// (the case was: mongo query on email input & fake pass = easy login)
+// BUT I TURNED THIS OF BECAUSE OF "Too many requests, please try again later."
+// MESSAGE WHILE TRYING TO MANAGE WITH THE WEBSITE A BIT FASTER :(
+app.use(mongoSanitize());
+// data sanitization against xss
+app.use(xssClean());
 //____________________________________________________________________
 // MIDDLEWARE
 // body parser, reading data from body into req.body
@@ -47,19 +51,22 @@ app.use((req, res, next) => {
     // console.log(req.headers)
     next();
 });
-// // prevent parameter pollution
-// app.use(
-//     hpp({
-//         whitelist: [
-//             'duration',
-//             'ratingsQuantity',
-//             'ratingsAverage',
-//             'maxGroupSize',
-//             'difficulty',
-//             'price',
-//         ],
-//     })
-// );
+// prevent parameter pollution
+app.use(
+    hpp({
+        whitelist: [
+            'duration',
+            'ratingsQuantity',
+            'ratingsAverage',
+            'maxGroupSize',
+            'difficulty',
+            'price',
+        ],
+    })
+);
+// COMPRESS TEXT
+app.use(compression())
+
 //____________________________________________________________________
 // Routes
 const viewRouter = require('./routes/view')

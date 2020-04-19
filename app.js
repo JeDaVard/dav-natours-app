@@ -30,7 +30,7 @@ app.set('views', path.join(__dirname, 'views'));
 //____________________________________________________________________
 
 //Stripe checkout WebHook (attention: before express.json middleware for getting worked)
-app.post('/webhook-checkout', express.raw({ type: 'application/json' }), bookingController);
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), bookingController.webhookCheckout);
 //____________________________________________________________________
 
 // GLOBAL MID FOR SECURITY SEEKS

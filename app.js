@@ -6,6 +6,13 @@ const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
 
+const viewRouter = require('./routes/view')
+const tourRouter = require('./routes/tour');
+const userRouter = require('./routes/user');
+const reviewRouter = require('./routes/review');
+const bookingRouter = require('./routes/booking');
+const bookingController = require('./controllers/booking');
+
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
@@ -13,13 +20,19 @@ const xssClean = require('xss-clean');
 const hpp = require('hpp');
 
 //____________________________________________________________________
+
 // App settings
 const app = express();
 app.enable('trust proxy');
 
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'))
+app.set('views', path.join(__dirname, 'views'));
 //____________________________________________________________________
+
+//Stripe checkout WebHook (attention: before express.json middleware for getting worked)
+app.post('/webhook-checkout', express.raw({ type: 'application/json' }), bookingController);
+//____________________________________________________________________
+
 // GLOBAL MID FOR SECURITY SEEKS
 // set security http headers
 app.use(helmet());
@@ -80,12 +93,6 @@ app.use(compression())
 
 //____________________________________________________________________
 // Routes
-const viewRouter = require('./routes/view')
-const tourRouter = require('./routes/tour');
-const userRouter = require('./routes/user');
-const reviewRouter = require('./routes/review');
-const bookingRouter = require('./routes/booking');
-
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);

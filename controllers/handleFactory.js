@@ -17,6 +17,7 @@ exports.deleteOne = Model => catchAsync(async (req, res, next) => {
 
 exports.updateOne = Model => catchAsync(async (req, res, next) => {
     const updates = req.body;
+    // console.log(req.formData)
 
     const _id = req.params.id;
     const doc = await Model.findByIdAndUpdate(_id, updates, {new: true});
@@ -35,7 +36,6 @@ exports.createOne = Model => catchAsync(async (req, res, next) => {
     const data = req.body;
 
     const doc = await Model.create(data);
-
     res.status(201).json({
         status: 'success',
         data: {

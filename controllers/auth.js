@@ -18,9 +18,15 @@ const createSendToken = (user, statusCode, req, res) => {
     const cookieOptions = {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         httpOnly: true,
+<<<<<<< HEAD
     // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
         //the same as
         secure: req.secure || req.headers('x-forwarded-proto') === 'https'
+=======
+        secure: process.env.NODE_ENV === 'production'
+        //the same as
+        // secure: req.secure || req.headers('x-forwarded-proto') === 'https'
+>>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
     }
 
     res.cookie('token', token, cookieOptions)
@@ -73,7 +79,11 @@ exports.signIn = catchAsync(async (req, res, next) => {
 exports.logout = (req, res) => {
     res.cookie('token', 'loggedOut(dummyText)', {
         expires: new Date(Date.now() + 10 * 1000),
+<<<<<<< HEAD
         // httpOnly: true
+=======
+        httpOnly: true
+>>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
     });
     res.status(200).json({ status: 'success' });
 };

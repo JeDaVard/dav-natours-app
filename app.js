@@ -3,9 +3,6 @@ const path = require('path');
 const AppError = require('./utils/appError');
 const globalErrorController = require('./controllers/error');
 const cookieParser = require('cookie-parser');
-<<<<<<< HEAD
-const compression = require('compression')
-=======
 const compression = require('compression');
 const cors = require('cors');
 
@@ -15,7 +12,6 @@ const userRouter = require('./routes/user');
 const reviewRouter = require('./routes/review');
 const bookingRouter = require('./routes/booking');
 const bookingController = require('./controllers/booking');
->>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
 
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
@@ -51,11 +47,7 @@ app.use('/', limiter);
 // (the case was: mongo query on email input & fake pass = easy login)
 // BUT I TURNED THIS OF BECAUSE OF "Too many requests, please try again later."
 // MESSAGE WHILE TRYING TO MANAGE WITH THE WEBSITE A BIT FASTER :(
-<<<<<<< HEAD
-app.use(mongoSanitize());
-=======
 // app.use(mongoSanitize());
->>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
 // data sanitization against xss
 app.use(xssClean());
 //Implementing cors
@@ -99,17 +91,8 @@ app.use(
 // COMPRESS TEXT
 app.use(compression())
 
-//____________________________________________________________________
+//___________________________________________________________________
 // Routes
-<<<<<<< HEAD
-const viewRouter = require('./routes/view')
-const tourRouter = require('./routes/tour');
-const userRouter = require('./routes/user');
-const reviewRouter = require('./routes/review');
-const bookingRouter = require('./routes/booking');
-
-=======
->>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);

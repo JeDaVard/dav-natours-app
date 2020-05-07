@@ -1,10 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Tour = require('../models/tour');
 const Booking = require('../models/booking');
-<<<<<<< HEAD
-=======
 const User  = require('../models/user')
->>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
 const catchAsync = require('../utils/catchAsync');
 const handleFactory = require('./handleFactory');
 
@@ -13,11 +10,7 @@ exports.getCheckoutSession = catchAsync( async (req, res, next) => {
 
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-<<<<<<< HEAD
-        success_url: `${req.protocol}://${req.get('host')}/?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
-=======
         success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
->>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
         cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
         customer_email: req.user.email,
         client_reference_id: req.params.tourId,
@@ -38,17 +31,6 @@ exports.getCheckoutSession = catchAsync( async (req, res, next) => {
     })
 })
 
-<<<<<<< HEAD
-exports.createBookingCheckout = catchAsync(async (req, res, next) => {
-    // This is temporary, because it is NOT secure: everyone can make bookings without paying
-    const {tour, user, price } = req.query;
-
-    if (!tour && !user && !price) return next();
-    await Booking.create({ tour, user, price })
-
-    res.redirect(`${req.originalUrl.split('?')[0]}`);
-});
-=======
 // exports.createBookingCheckout = catchAsync(async (req, res, next) => {
 //     // This is temporary, because it is NOT secure: everyone can make bookings without paying
 //     const {tour, user, price } = req.query;
@@ -83,7 +65,6 @@ exports.webhookCheckout = (req, res, next) => {
         received: true
     })
 }
->>>>>>> 3f2c44c94866c3fffd31e6288c26819cd30a5802
 
 exports.getBookings = handleFactory.getAll(Booking);
 exports.getBooking = handleFactory.getOne(Booking);
